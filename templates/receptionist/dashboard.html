@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Receptionist Dashboard - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">Receptionist Dashboard</h1>
+    <p class="text-muted mb-0">Manage appointment requests and assign doctors</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted small mb-1">Pending Requests</p>
+                        <h3 class="mb-0">{{ stats.pending_count }}</h3>
+                    </div>
+                    <div class="stat-icon bg-warning bg-opacity-10">
+                        <i class="bi bi-clock-history text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted small mb-1">Today's Appointments</p>
+                        <h3 class="mb-0">{{ stats.today_count }}</h3>
+                    </div>
+                    <div class="stat-icon bg-success bg-opacity-10">
+                        <i class="bi bi-calendar-check text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted small mb-1">Available Doctors</p>
+                        <h3 class="mb-0">{{ stats.total_doctors }}</h3>
+                    </div>
+                    <div class="stat-icon bg-primary bg-opacity-10">
+                        <i class="bi bi-person-badge text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <a href="{{ url_for('receptionist_pending') }}" class="card text-decoration-none h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-inbox text-warning mb-3" style="font-size: 2.5rem;"></i>
+                <h5>View Pending Requests</h5>
+                <p class="text-muted mb-0">{{ stats.pending_count }} requests waiting for assignment</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6">
+        <a href="{{ url_for('receptionist_appointments') }}" class="card text-decoration-none h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-calendar3 text-primary mb-3" style="font-size: 2.5rem;"></i>
+                <h5>View Appointments</h5>
+                <p class="text-muted mb-0">See today's scheduled appointments</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Pending Requests -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-clock-history me-2 text-warning"></i>Recent Pending Requests
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if pending_requests %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Reason for Visit</th>
+                        <th>Preferred Date</th>
+                        <th>Submitted</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in pending_requests %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ request.patient.name }}</div>
+                            <small class="text-muted">{{ request.patient.email }}</small>
+                        </td>
+                        <td>
+                            <span class="text-truncate d-inline-block" style="max-width: 200px;">
+                                {{ request.reason_for_visit }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if request.preferred_date %}
+                            {{ request.preferred_date|format_date }}
+                            {% else %}
+                            <span class="text-muted">Any</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ request.created_at|format_datetime }}</small>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('receptionist_assign', appointment_id=request.id) }}"
+                                class="btn btn-sm btn-primary">
+                                <i class="bi bi-person-plus me-1"></i>Assign
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+            <h5 class="text-muted mt-3">No Pending Requests</h5>
+            <p class="text-muted">All appointment requests have been processed!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

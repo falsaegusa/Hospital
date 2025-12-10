@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Staff Login - MediCare{% endblock %}
+
+{% block guest_content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                <i class="bi bi-briefcase-medical"></i>
+            </div>
+            <h2>Staff Portal</h2>
+            <p>Login for doctors and administrators</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('staff_login') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    {{ form.email(class="form-control", placeholder="Staff Email") }}
+                </div>
+                {% if form.email.errors %}
+                <div class="invalid-feedback d-block">{{ form.email.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    {{ form.password(class="form-control", placeholder="Password") }}
+                </div>
+                {% if form.password.errors %}
+                <div class="invalid-feedback d-block">{{ form.password.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3"
+                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none;">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Staff Login
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p class="mb-0 small text-muted">
+                <i class="bi bi-person me-1"></i>
+                Patient? <a href="{{ url_for('login') }}">Patient Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

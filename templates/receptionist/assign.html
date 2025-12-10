@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Assign Doctor - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('receptionist_dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('receptionist_pending') }}">Pending</a></li>
+            <li class="breadcrumb-item active">Assign Doctor</li>
+        </ol>
+    </nav>
+    <h1 class="h3 mb-1">Assign Doctor</h1>
+    <p class="text-muted mb-0">Review the request and assign an appropriate doctor</p>
+</div>
+
+<div class="row">
+    <!-- Request Details -->
+    <div class="col-lg-5 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-file-medical me-2"></i>Request Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted small">Patient</label>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="avatar-placeholder">
+                            {{ appointment.patient.name[0] }}
+                        </div>
+                        <div>
+                            <div class="fw-semibold">{{ appointment.patient.name }}</div>
+                            <small class="text-muted">{{ appointment.patient.email }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-muted small">Reason for Visit</label>
+                    <div class="p-3 bg-dark rounded">{{ appointment.reason_for_visit }}</div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="text-muted small">Preferred Date</label>
+                        <div class="fw-semibold">
+                            {% if appointment.preferred_date %}
+                            {{ appointment.preferred_date|format_date }}
+                            {% else %}
+                            <span class="text-muted">Any</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted small">Submitted</label>
+                        <div class="fw-semibold">{{ appointment.created_at|format_datetime }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Suggestion -->
+        <div class="card mt-3">
+            <div class="card-header bg-info bg-opacity-10">
+                <h5 class="mb-0 text-info"><i class="bi bi-cpu me-2"></i>Smart Suggestions</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3"><strong>{{ specialty_summary }}</strong></p>
+
+                {% if suggestions %}
+                <p class="text-muted small mb-2">Recommended doctors based on symptoms:</p>
+                {% for suggestion in suggestions %}
+                <div
+                    class="d-flex align-items-center gap-2 mb-2 p-2 rounded {% if suggestion.relevance == 'high' %}bg-success bg-opacity-10{% elif suggestion.relevance == 'medium' %}bg-info bg-opacity-10{% else %}bg-secondary bg-opacity-10{% endif %}">
+                    {% if suggestion.doctor.photo_filename %}
+                    <img src="{{ suggestion.doctor.photo_filename|doctor_photo }}" alt="" class="rounded-circle"
+                        style="width: 36px; height: 36px; object-fit: cover;">
+                    {% else %}
+                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+                        style="width: 36px; height: 36px;">
+                        <i class="bi bi-person text-white"></i>
+                    </div>
+                    {% endif %}
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold">Dr. {{ suggestion.doctor.user.name }}</div>
+                        <small class="text-muted">{{ suggestion.doctor.specialization }}</small>
+                    </div>
+                    <span
+                        class="badge {% if suggestion.relevance == 'high' %}bg-success{% elif suggestion.relevance == 'medium' %}bg-info{% else %}bg-secondary{% endif %}">
+                        {{ suggestion.relevance }}
+                    </span>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted">No specific recommendations available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Form -->
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-calendar-plus me-2"></i>Assign Doctor & Schedule</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label class="form-label">Select Doctor</label>
+                        {{ form.doctor_id(class="form-select") }}
+                        {% if form.doctor_id.errors %}
+                        <div class="invalid-feedback d-block">{{ form.doctor_id.errors[0] }}</div>
+                        {% endif %}
+                        <div class="form-text text-muted">
+                            <i class="bi bi-lightbulb me-1"></i>Consider the AI suggestions above
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Appointment Date</label>
+                            {{ form.appointment_date(class="form-control") }}
+                            {% if form.appointment_date.errors %}
+                            <div class="invalid-feedback d-block">{{ form.appointment_date.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Appointment Time</label>
+                            {{ form.appointment_time(class="form-control") }}
+                            {% if form.appointment_time.errors %}
+                            <div class="invalid-feedback d-block">{{ form.appointment_time.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle me-2"></i>
+                        The patient will be notified once you confirm the assignment.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-check-lg me-2"></i>Confirm Assignment
+                        </button>
+                        <a href="{{ url_for('receptionist_pending') }}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+</style>
+{% endblock %}

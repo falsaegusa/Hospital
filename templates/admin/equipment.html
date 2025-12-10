@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Equipment - MediCare Admin{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">Manage Equipment</h1>
+    <p class="text-muted mb-0">Track and manage medical equipment</p>
+</div>
+
+<div class="row">
+    <!-- Add Equipment Form -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-plus-circle me-2 text-primary"></i>Add Equipment
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_equipment') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">{{ form.name.label.text }}</label>
+                        {{ form.name(class="form-control", placeholder="e.g., ECG Monitor") }}
+                        {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">{{ form.name.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="equipment_type" class="form-label">{{ form.equipment_type.label.text }}</label>
+                        {{ form.equipment_type(class="form-control", placeholder="e.g., Diagnostic") }}
+                        {% if form.equipment_type.errors %}
+                        <div class="invalid-feedback d-block">{{ form.equipment_type.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="serial_number" class="form-label">{{ form.serial_number.label.text }}</label>
+                        {{ form.serial_number(class="form-control", placeholder="e.g., SN-123456") }}
+                        {% if form.serial_number.errors %}
+                        <div class="invalid-feedback d-block">{{ form.serial_number.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="room_id" class="form-label">{{ form.room_id.label.text }}</label>
+                        {{ form.room_id(class="form-select") }}
+                        {% if form.room_id.errors %}
+                        <div class="invalid-feedback d-block">{{ form.room_id.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="status" class="form-label">{{ form.status.label.text }}</label>
+                        {{ form.status(class="form-select") }}
+                        {% if form.status.errors %}
+                        <div class="invalid-feedback d-block">{{ form.status.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-lg me-2"></i>Add Equipment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Existing Equipment -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-tools me-2 text-primary"></i>Equipment Inventory
+                    <span class="badge bg-secondary ms-2">{{ equipment|length }}</span>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if equipment %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Serial Number</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in equipment %}
+                            <tr>
+                                <td><span class="text-muted">#{{ item.id }}</span></td>
+                                <td class="fw-semibold">{{ item.name }}</td>
+                                <td>{{ item.equipment_type }}</td>
+                                <td><code class="text-muted">{{ item.serial_number }}</code></td>
+                                <td>
+                                    {% if item.room %}
+                                    <i class="bi bi-door-open me-1 text-muted"></i>{{ item.room.room_number }}
+                                    {% else %}
+                                    <span class="text-muted">Unassigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge {% if item.status == 'available' %}badge-success{% elif item.status == 'in-use' %}badge-primary{% else %}badge-warning{% endif %}">
+                                        {{ item.status|capitalize }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-tools text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="text-muted mt-3">No Equipment</h5>
+                    <p class="text-muted">Add equipment using the form.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

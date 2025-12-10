@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">My Profile</h1>
+    <p class="text-muted mb-0">Manage your professional and personal information</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <!-- Profile Card -->
+        <div class="card">
+            <div class="card-body text-center py-4">
+                {% if doctor and doctor.photo_filename %}
+                <img src="{{ doctor.photo_filename|doctor_photo }}" alt="Dr. {{ current_user.name }}"
+                    class="rounded-circle mb-3"
+                    style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--primary);">
+                {% else %}
+                <div class="mx-auto mb-3"
+                    style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 3rem; color: white; font-weight: 700;">{{ current_user.name[0]|upper
+                        }}</span>
+                </div>
+                {% endif %}
+                <h4 class="mb-1">Dr. {{ current_user.name }}</h4>
+                <p class="text-muted mb-2">{{ current_user.email }}</p>
+                {% if doctor %}
+                <span class="badge badge-primary">{{ doctor.specialization }}</span>
+                {% endif %}
+            </div>
+
+            {% if doctor %}
+            <div class="card-footer bg-transparent">
+                <div class="row text-center small">
+                    <div class="col border-end">
+                        <div class="text-muted">Department</div>
+                        <div class="fw-semibold">{{ doctor.department }}</div>
+                    </div>
+                    <div class="col">
+                        <div class="text-muted">Experience</div>
+                        <div class="fw-semibold">{{ doctor.years_of_experience }} yrs</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Photo Upload -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-camera me-2 text-primary"></i>Profile Photo
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('doctor_upload_photo') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <input type="file" name="photo" class="form-control"
+                            accept="image/png, image/jpeg, image/jpg, image/gif" required>
+                        <div class="form-text text-muted">PNG, JPG, GIF (Max 16MB)</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-upload me-2"></i>Upload Photo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        {% if doctor %}
+        <!-- Doctor Info Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-badge me-2 text-primary"></i>Professional Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Specialization</label>
+                        <p class="fw-semibold mb-0">{{ doctor.specialization }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Department</label>
+                        <p class="fw-semibold mb-0">{{ doctor.department }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">License Number</label>
+                        <p class="fw-semibold mb-0">{{ doctor.license_number }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Consultation Fee</label>
+                        <p class="fw-semibold mb-0">${{ doctor.consultation_fee }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-warning mb-4">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Your doctor profile is not set up yet. Please contact the administrator.
+        </div>
+        {% endif %}
+
+        <!-- Personal Info Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-pencil me-2 text-primary"></i>Personal Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('doctor_profile') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-4">
+                        <label for="name" class="form-label">{{ form.name.label.text }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text"
+                                style="background: var(--surface); border-color: var(--border-color); color: var(--text-muted);">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            {{ form.name(class="form-control") }}
+                        </div>
+                        {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">{{ form.name.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"
+                                style="background: var(--surface); border-color: var(--border-color); color: var(--text-muted);">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+                            <input type="email" class="form-control" value="{{ current_user.email }}" disabled>
+                            <span class="input-group-text"
+                                style="background: var(--surface); border-color: var(--border-color);">
+                                <i class="bi bi-lock text-muted"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">{{ form.phone.label.text }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"
+                                    style="background: var(--surface); border-color: var(--border-color); color: var(--text-muted);">
+                                    <i class="bi bi-telephone"></i>
+                                </span>
+                                {{ form.phone(class="form-control") }}
+                            </div>
+                            {% if form.phone.errors %}
+                            <div class="invalid-feedback d-block">{{ form.phone.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="date_of_birth" class="form-label">{{ form.date_of_birth.label.text }}</label>
+                            {{ form.date_of_birth(class="form-control") }}
+                            {% if form.date_of_birth.errors %}
+                            <div class="invalid-feedback d-block">{{ form.date_of_birth.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="gender" class="form-label">{{ form.gender.label.text }}</label>
+                        {{ form.gender(class="form-select") }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="address" class="form-label">{{ form.address.label.text }}</label>
+                        {{ form.address(class="form-control", rows=3) }}
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check2 me-2"></i>Save Changes
+                        </button>
+                        <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-ghost">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

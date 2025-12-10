@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Reschedule Appointment - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-2">
+            <li class="breadcrumb-item"><a href="{{ url_for('patient_dashboard') }}"
+                    class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('patient_appointments') }}"
+                    class="text-decoration-none">Appointments</a></li>
+            <li class="breadcrumb-item active">Reschedule</li>
+        </ol>
+    </nav>
+    <h1 class="h3 mb-1">Reschedule Appointment</h1>
+    <p class="text-muted mb-0">Change the date and time of your appointment</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Current Appointment Card -->
+        <div class="card mb-4" style="border-left: 4px solid var(--warning);">
+            <div class="card-body">
+                <h6 class="text-muted mb-3">
+                    <i class="bi bi-calendar-event me-2"></i>Current Appointment
+                </h6>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="d-flex align-items-center gap-3">
+                            {% if appointment.doctor %}
+                            {% if appointment.doctor.photo_filename %}
+                            <img src="{{ appointment.doctor.photo_filename|doctor_photo }}" alt=""
+                                class="doctor-photo doctor-photo-lg">
+                            {% else %}
+                            <div class="doctor-photo-placeholder" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div class="fw-semibold">Dr. {{ appointment.doctor.user.name }}</div>
+                                <small class="text-muted">{{ appointment.doctor.specialization }}</small>
+                            </div>
+                            {% else %}
+                            <div class="doctor-photo-placeholder"
+                                style="width: 60px; height: 60px; font-size: 1.5rem; background: var(--warning);">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold text-warning">Pending</div>
+                                <small class="text-muted">Not yet assigned</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <small class="text-muted d-block">Date</small>
+                        {% if appointment.appointment_date %}
+                        <span class="fw-semibold">{{ appointment.appointment_date|format_date }}</span>
+                        {% else %}
+                        <span class="text-muted">Pending</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-4">
+                        <small class="text-muted d-block">Time</small>
+                        {% if appointment.appointment_time %}
+                        <span class="fw-semibold">{{ appointment.appointment_time|format_time }}</span>
+                        {% else %}
+                        <span class="text-muted">Pending</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reschedule Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-plus me-2 text-primary"></i>Select New Date & Time
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('reschedule_appointment', appointment_id=appointment.id) }}">
+                    {{ form.hidden_tag() }}
+
+                    <!-- Doctor Selection -->
+                    <div class="mb-4">
+                        <label for="doctor_id" class="form-label">{{ form.doctor_id.label.text }}</label>
+                        {{ form.doctor_id(class="form-select") }}
+                        {% if form.doctor_id.errors %}
+                        <div class="invalid-feedback d-block">{{ form.doctor_id.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Date and Time -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="appointment_date" class="form-label">{{ form.appointment_date.label.text
+                                }}</label>
+                            {{ form.appointment_date(class="form-control") }}
+                            {% if form.appointment_date.errors %}
+                            <div class="invalid-feedback d-block">{{ form.appointment_date.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="appointment_time" class="form-label">{{ form.appointment_time.label.text
+                                }}</label>
+                            {{ form.appointment_time(class="form-control", placeholder="HH:MM") }}
+                            {% if form.appointment_time.errors %}
+                            <div class="invalid-feedback d-block">{{ form.appointment_time.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Reason -->
+                    <div class="mb-4">
+                        <label for="reason_for_visit" class="form-label">{{ form.reason_for_visit.label.text }}</label>
+                        {{ form.reason_for_visit(class="form-control", rows=3) }}
+                        {% if form.reason_for_visit.errors %}
+                        <div class="invalid-feedback d-block">{{ form.reason_for_visit.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check2 me-2"></i>Confirm Reschedule
+                        </button>
+                        <a href="{{ url_for('patient_appointments') }}" class="btn btn-ghost">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="mb-3">
+                    <i class="bi bi-exclamation-triangle me-2 text-warning"></i>Important
+                </h6>
+                <ul class="list-unstyled mb-0 text-muted small">
+                    <li class="mb-2">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Your original time slot will be freed up
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-info-circle me-2"></i>
+                        A new room may be assigned
+                    </li>
+                    <li>
+                        <i class="bi bi-info-circle me-2"></i>
+                        You'll receive confirmation
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

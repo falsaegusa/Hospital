@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports - MediCare Admin{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">{{ title }}</h1>
+    <p class="text-muted mb-0">Generate and view appointment reports</p>
+</div>
+
+<!-- Report Type Selector -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <a href="{{ url_for('admin_reports', type='daily') }}"
+                    class="btn {% if request.args.get('type') == 'daily' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
+                    <i class="bi bi-calendar-day d-block mb-1" style="font-size: 1.5rem;"></i>
+                    Daily Report
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('admin_reports', type='weekly') }}"
+                    class="btn {% if request.args.get('type') == 'weekly' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
+                    <i class="bi bi-calendar-week d-block mb-1" style="font-size: 1.5rem;"></i>
+                    Weekly Report
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('admin_reports', type='monthly') }}"
+                    class="btn {% if request.args.get('type') == 'monthly' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
+                    <i class="bi bi-calendar-month d-block mb-1" style="font-size: 1.5rem;"></i>
+                    Monthly Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if report_stats %}
+<!-- Summary Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon primary">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="stat-value">{{ report_stats.total }}</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon success">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-value">{{ report_stats.completed }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon warning">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <div class="stat-value">{{ report_stats.scheduled }}</div>
+                <div class="stat-label">Scheduled</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon danger">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <div class="stat-value">{{ report_stats.cancelled }}</div>
+                <div class="stat-label">Cancelled</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Details -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-list-ul me-2 text-primary"></i>Appointment Details
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if appointments %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Fee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>
+                            {% if appointment.appointment_date %}
+                            <div class="small fw-semibold">{{ appointment.appointment_date|format_date }}</div>
+                            <small class="text-muted">{{ appointment.appointment_time|format_time }}</small>
+                            {% else %}
+                            <span class="text-muted">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ appointment.patient.name }}</td>
+                        <td>{% if appointment.doctor %}Dr. {{ appointment.doctor.user.name }}{% else %}<span
+                                class="text-warning">Pending</span>{% endif %}</td>
+                        <td>{% if appointment.doctor %}{{ appointment.doctor.department }}{% else %}-{% endif %}</td>
+                        <td>
+                            <span class="badge badge-{{ appointment.status }}">
+                                {{ appointment.status|capitalize }}
+                            </span>
+                        </td>
+                        <td class="fw-semibold">{% if appointment.doctor %}${{ appointment.doctor.consultation_fee }}{%
+                            else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+            <h5 class="text-muted mt-3">No Appointments</h5>
+            <p class="text-muted">No appointments found for this period.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Revenue Summary -->
+{% if appointments %}
+<div class="card"
+    style="background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%); border: none;">
+    <div class="card-body text-white">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h5 class="text-white-50 mb-1">Revenue from Completed Appointments</h5>
+                <h2 class="mb-0 text-white">${{ appointments|selectattr('status', 'equalto',
+                    'completed')|map(attribute='doctor.consultation_fee')|sum }}</h2>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <i class="bi bi-currency-dollar" style="font-size: 4rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-graph-up text-muted" style="font-size: 4rem;"></i>
+        <h4 class="mt-3">Select a Report Type</h4>
+        <p class="text-muted">Choose Daily, Weekly, or Monthly to generate a report.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

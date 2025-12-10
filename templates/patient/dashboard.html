@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">Welcome back, {{ current_user.name }}!</h1>
+    <p class="text-muted mb-0">Here's an overview of your appointments</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon primary">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="stat-value">{{ appointments|length }}</div>
+                <div class="stat-label">Upcoming Appointments</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon success">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-value">{{ completed_count|default(0) }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon warning">
+                    <i class="bi bi-bell"></i>
+                </div>
+                <div class="stat-value">{{ unread_count }}</div>
+                <div class="stat-label">Notifications</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <a href="{{ url_for('book_appointment') }}" class="stretched-link text-decoration-none">
+                    <div class="stat-icon" style="background: rgba(var(--primary-rgb), 0.2);">
+                        <i class="bi bi-plus-lg" style="color: var(--primary);"></i>
+                    </div>
+                    <div class="stat-label mt-3 text-primary fw-semibold">Book New Appointment</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Appointments -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-calendar-week me-2 text-primary"></i>Upcoming Appointments
+        </h5>
+        <a href="{{ url_for('patient_appointments') }}" class="btn btn-ghost btn-sm">
+            View All <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div class="card-body p-0">
+        {% if appointments %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Date & Time</th>
+                        <th>Specialization</th>
+                        <th>Room</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                {% if appointment.doctor %}
+                                {% if appointment.doctor.photo_filename %}
+                                <img src="{{ appointment.doctor.photo_filename|doctor_photo }}"
+                                    alt="{{ appointment.doctor.user.name }}" class="doctor-photo">
+                                {% else %}
+                                <div class="doctor-photo-placeholder">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="fw-semibold">Dr. {{ appointment.doctor.user.name }}</div>
+                                    <small class="text-muted">{{ appointment.doctor.department }}</small>
+                                </div>
+                                {% else %}
+                                <div class="doctor-photo-placeholder" style="background: var(--warning);">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold text-warning">Pending</div>
+                                    <small class="text-muted">Awaiting assignment</small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if appointment.appointment_date %}
+                            <div class="fw-semibold">{{ appointment.appointment_date|format_date }}</div>
+                            <small class="text-muted">{{ appointment.appointment_time|format_time }}</small>
+                            {% else %}
+                            <span class="text-muted">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if appointment.doctor %}
+                            <span class="badge badge-primary">{{ appointment.doctor.specialization }}</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if appointment.room %}
+                            <i class="bi bi-door-open me-1 text-muted"></i>{{ appointment.room.room_number }}
+                            {% else %}
+                            <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ appointment.status }}">
+                                {{ appointment.status|capitalize }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('reschedule_appointment', appointment_id=appointment.id) }}"
+                                    class="btn btn-outline-primary" title="Reschedule">
+                                    <i class="bi bi-calendar2-plus"></i>
+                                </a>
+                                <form method="POST"
+                                    action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Are you sure you want to cancel this appointment?')">
+                                    <button type="submit" class="btn btn-outline-danger" title="Cancel">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="bi bi-calendar-x" style="font-size: 3rem; color: var(--text-muted);"></i>
+            </div>
+            <h5 class="text-muted">No upcoming appointments</h5>
+            <p class="text-muted mb-4">Book your first appointment to get started</p>
+            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>Book Appointment
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

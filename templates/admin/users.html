@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users - MediCare Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Manage Users</h1>
+        <p class="text-muted mb-0">View and manage system users</p>
+    </div>
+</div>
+
+<!-- Filter Pills -->
+<ul class="nav nav-pills mb-4">
+    <li class="nav-item">
+        <a href="{{ url_for('admin_users', role='all') }}"
+            class="nav-link {% if request.args.get('role', 'all') == 'all' %}active{% endif %}">
+            All Users
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('admin_users', role='patient') }}"
+            class="nav-link {% if request.args.get('role') == 'patient' %}active{% endif %}">
+            <i class="bi bi-person-heart me-1"></i>Patients
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('admin_users', role='doctor') }}"
+            class="nav-link {% if request.args.get('role') == 'doctor' %}active{% endif %}">
+            <i class="bi bi-heart-pulse me-1"></i>Doctors
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('admin_users', role='receptionist') }}"
+            class="nav-link {% if request.args.get('role') == 'receptionist' %}active{% endif %}">
+            <i class="bi bi-headset me-1"></i>Receptionists
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('admin_users', role='admin') }}"
+            class="nav-link {% if request.args.get('role') == 'admin' %}active{% endif %}">
+            <i class="bi bi-shield-lock me-1"></i>Admins
+        </a>
+    </li>
+</ul>
+
+<!-- Users Table -->
+<div class="card">
+    <div class="card-header">
+        <span class="badge bg-secondary">{{ users|length }} users</span>
+    </div>
+    <div class="card-body p-0">
+        {% if users %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>DOB</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><span class="text-muted">#{{ user.id }}</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="user-avatar"
+                                    style="width: 36px; height: 36px; font-size: 0.875rem; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                    {{ user.name[0]|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{ user.name }}</div>
+                                    <small class="text-muted">{{ user.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span
+                                class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'doctor' %}bg-success{% elif user.role == 'receptionist' %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                                {{ user.role|capitalize }}
+                            </span>
+                        </td>
+                        <td>{{ user.phone or '-' }}</td>
+                        <td>{{ user.gender|capitalize if user.gender else '-' }}</td>
+                        <td>{{ user.date_of_birth|format_date if user.date_of_birth else '-' }}</td>
+                        <td>
+                            <small class="text-muted">{{ user.created_at|format_date }}</small>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+            <h5 class="text-muted mt-3">No Users Found</h5>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

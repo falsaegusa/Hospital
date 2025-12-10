@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Today's Appointments - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">Appointments Schedule</h1>
+    <p class="text-muted mb-0">View today's and upcoming appointments (read-only)</p>
+</div>
+
+<!-- Today's Appointments -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-calendar-day me-2 text-primary"></i>Today - {{ today|format_date }}
+            <span class="badge bg-primary ms-2">{{ today_appointments|length }} appointments</span>
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if today_appointments %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for apt in today_appointments %}
+                    <tr>
+                        <td>
+                            <span class="fw-semibold">{{ apt.appointment_time|format_time }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ apt.patient.name }}</div>
+                            <small class="text-muted">{{ apt.patient.phone or '-' }}</small>
+                        </td>
+                        <td>
+                            {% if apt.doctor %}
+                            <span class="badge bg-success">Dr. {{ apt.doctor.user.name }}</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="text-truncate d-inline-block" style="max-width: 200px;">
+                                {{ apt.reason_for_visit or '-' }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if apt.status == 'scheduled' %}
+                            <span class="badge bg-primary">Scheduled</span>
+                            {% elif apt.status == 'completed' %}
+                            <span class="badge bg-success">Completed</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ apt.status|capitalize }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+            <h5 class="text-muted mt-3">No Appointments Today</h5>
+            <p class="text-muted">There are no scheduled appointments for today.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Upcoming Appointments -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-calendar-week me-2 text-info"></i>Upcoming (Next 7 Days)
+            <span class="badge bg-info ms-2">{{ upcoming_appointments|length }} appointments</span>
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if upcoming_appointments %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for apt in upcoming_appointments %}
+                    <tr>
+                        <td>{{ apt.appointment_date|format_date }}</td>
+                        <td>{{ apt.appointment_time|format_time }}</td>
+                        <td>{{ apt.patient.name }}</td>
+                        <td>
+                            {% if apt.doctor %}
+                            Dr. {{ apt.doctor.user.name }}
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="text-truncate d-inline-block" style="max-width: 200px;">
+                                {{ apt.reason_for_visit or '-' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-check text-muted" style="font-size: 3rem;"></i>
+            <h5 class="text-muted mt-3">No Upcoming Appointments</h5>
+            <p class="text-muted">No appointments scheduled in the next 7 days.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

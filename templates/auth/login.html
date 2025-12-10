@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - MediCare{% endblock %}
+
+{% block guest_content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <h2>Patient Login</h2>
+            <p>Sign in to manage your appointments</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    {{ form.email(class="form-control", placeholder="Email Address") }}
+                </div>
+                {% if form.email.errors %}
+                <div class="invalid-feedback d-block">{{ form.email.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    {{ form.password(class="form-control", placeholder="Password") }}
+                </div>
+                {% if form.password.errors %}
+                <div class="invalid-feedback d-block">{{ form.password.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p class="mb-2">Don't have an account? <a href="{{ url_for('register') }}">Create one</a></p>
+            <p class="mb-0 small text-muted">
+                <i class="bi bi-briefcase-medical me-1"></i>
+                Hospital staff? <a href="{{ url_for('staff_login') }}">Staff Portal</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

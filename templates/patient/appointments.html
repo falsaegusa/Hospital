@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block title %}My Appointments - MediCare{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">My Appointments</h1>
+        <p class="text-muted mb-0">View and manage all your appointments</p>
+    </div>
+    <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>New Appointment
+    </a>
+</div>
+
+<!-- Filter Tabs -->
+<ul class="nav nav-pills mb-4" id="appointmentTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button">
+            All <span class="badge bg-secondary ms-1">{{ appointments|length }}</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="scheduled-tab" data-bs-toggle="pill" data-bs-target="#scheduled" type="button">
+            Scheduled
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="completed-tab" data-bs-toggle="pill" data-bs-target="#completed" type="button">
+            Completed
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="cancelled-tab" data-bs-toggle="pill" data-bs-target="#cancelled" type="button">
+            Cancelled
+        </button>
+    </li>
+</ul>
+
+<!-- Appointments Table -->
+<div class="card">
+    <div class="card-body p-0">
+        {% if appointments %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Doctor</th>
+                        <th>Date & Time</th>
+                        <th>Room</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                        <th>Notes</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr class="appointment-row" data-status="{{ appointment.status }}">
+                        <td>
+                            <span class="text-muted">#{{ appointment.id }}</span>
+                        </td>
+                        <td>
+                            {% if appointment.doctor %}
+                            <div class="d-flex align-items-center gap-2">
+                                {% if appointment.doctor.photo_filename %}
+                                <img src="{{ appointment.doctor.photo_filename|doctor_photo }}" alt=""
+                                    class="doctor-photo" style="width: 36px; height: 36px;">
+                                {% else %}
+                                <div class="doctor-photo-placeholder"
+                                    style="width: 36px; height: 36px; font-size: 1rem;">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="fw-semibold small">Dr. {{ appointment.doctor.user.name }}</div>
+                                    <small class="text-muted">{{ appointment.doctor.specialization }}</small>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="doctor-photo-placeholder"
+                                    style="width: 36px; height: 36px; font-size: 1rem; background: var(--warning);">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small text-warning">Pending Assignment</div>
+                                    <small class="text-muted">Doctor will be assigned soon</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if appointment.appointment_date %}
+                            <div class="small fw-semibold">{{ appointment.appointment_date|format_date }}</div>
+                            <small class="text-muted">{{ appointment.appointment_time|format_time }}</small>
+                            {% else %}
+                            <span class="text-muted small">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if appointment.room %}
+                            <span class="small">{{ appointment.room.room_number }}</span>
+                            {% else %}
+                            <span class="text-muted small">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ appointment.status }}">
+                                {{ appointment.status|capitalize }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="small text-truncate d-inline-block" style="max-width: 150px;"
+                                title="{{ appointment.reason_for_visit or 'N/A' }}">
+                                {{ appointment.reason_for_visit or '-' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="small text-truncate d-inline-block" style="max-width: 150px;"
+                                title="{{ appointment.notes or 'N/A' }}">
+                                {{ appointment.notes or '-' }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            {% if appointment.status == 'scheduled' %}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('reschedule_appointment', appointment_id=appointment.id) }}"
+                                    class="btn btn-outline-primary" title="Reschedule">
+                                    <i class="bi bi-calendar2-plus"></i>
+                                </a>
+                                <form method="POST"
+                                    action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Are you sure you want to cancel this appointment?')">
+                                    <button type="submit" class="btn btn-outline-danger" title="Cancel">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="bi bi-calendar-x" style="font-size: 3rem; color: var(--text-muted);"></i>
+            </div>
+            <h5 class="text-muted">No appointments found</h5>
+            <p class="text-muted mb-4">You haven't booked any appointments yet</p>
+            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>Book Your First Appointment
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Simple client-side filtering by status
+    document.querySelectorAll('#appointmentTabs button').forEach(tab => {
+        tab.addEventListener('click', function () {
+            const status = this.id.replace('-tab', '');
+            document.querySelectorAll('.appointment-row').forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

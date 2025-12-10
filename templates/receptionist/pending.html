@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Pending Requests - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">Pending Appointment Requests</h1>
+    <p class="text-muted mb-0">Review patient requests and assign appropriate doctors</p>
+</div>
+
+{% if requests %}
+<div class="row g-4">
+    {% for item in requests %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">
+                        <i class="bi bi-person me-2"></i>{{ item.appointment.patient.name }}
+                    </h5>
+                    <small class="text-muted">{{ item.appointment.patient.email }}</small>
+                </div>
+                <span class="badge bg-warning text-dark">Pending</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h6 class="text-muted small text-uppercase mb-2">Reason for Visit</h6>
+                        <p class="mb-3">{{ item.appointment.reason_for_visit }}</p>
+
+                        <div class="d-flex gap-3 mb-3">
+                            <div>
+                                <small class="text-muted">Preferred Date</small>
+                                <div class="fw-semibold">
+                                    {% if item.appointment.preferred_date %}
+                                    {{ item.appointment.preferred_date|format_date }}
+                                    {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div>
+                                <small class="text-muted">Submitted</small>
+                                <div class="fw-semibold">{{ item.appointment.created_at|format_datetime }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="alert alert-info mb-3">
+                            <i class="bi bi-lightbulb me-2"></i>
+                            <strong>AI Suggestion:</strong> {{ item.specialty_summary }}
+                        </div>
+
+                        {% if item.suggestions %}
+                        <h6 class="text-muted small text-uppercase mb-2">Suggested Doctors</h6>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            {% for suggestion in item.suggestions %}
+                            <span
+                                class="badge {% if suggestion.relevance == 'high' %}bg-success{% elif suggestion.relevance == 'medium' %}bg-info{% else %}bg-secondary{% endif %}">
+                                <i class="bi bi-person-badge me-1"></i>
+                                Dr. {{ suggestion.doctor.user.name }} - {{ suggestion.doctor.specialization }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <a href="{{ url_for('receptionist_assign', appointment_id=item.appointment.id) }}"
+                            class="btn btn-primary">
+                            <i class="bi bi-person-plus me-2"></i>Assign Doctor & Schedule
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-inbox text-success" style="font-size: 4rem;"></i>
+        <h4 class="text-muted mt-3">All Caught Up!</h4>
+        <p class="text-muted">There are no pending appointment requests to process.</p>
+        <a href="{{ url_for('receptionist_dashboard') }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

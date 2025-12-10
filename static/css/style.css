@@ -1,0 +1,1723 @@
+/* ============================================
+   Hospital Management System - Custom Styles
+   Bootstrap 5 Enhancement Layer
+   Modern Dark Theme - 21st.dev Inspired
+   ============================================ */
+
+/* ==================== Design Tokens ==================== */
+:root {
+  /* Primary Colors - Soft Violet */
+  --primary: #8b5cf6;
+  --primary-dark: #7c3aed;
+  --primary-light: #c4b5fd;
+  --primary-rgb: 139, 92, 246;
+
+  /* Secondary Colors - Emerald (soft green) */
+  --secondary: #34d399;
+  --secondary-dark: #10b981;
+  --secondary-light: #6ee7b7;
+
+  /* Accent - Rose/Pink */
+  --accent: #f472b6;
+  --accent-dark: #ec4899;
+  --accent-light: #f9a8d4;
+
+  /* Background & Surface - Neutral Zinc */
+  --bg-dark: #09090b;
+  --bg-darker: #000000;
+  --surface: #18181b;
+  --surface-light: #27272a;
+  --surface-lighter: #3f3f46;
+  --surface-hover: rgba(255, 255, 255, 0.05);
+
+  /* Text - Maximum Contrast */
+  --text-primary: #fafafa;
+  --text-secondary: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --text-dark: #09090b;
+  --text-on-primary: #ffffff;
+  --text-on-warning: #18181b;
+
+  /* Semantic Colors - Softer for dark theme */
+  --success: #34d399;
+  --success-bg: rgba(52, 211, 153, 0.12);
+  --success-text: #6ee7b7;
+
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.12);
+  --warning-text: #fcd34d;
+
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --danger-text: #fca5a5;
+
+  /* Info - Using violet to avoid blue-on-blue */
+  --info: #c4b5fd;
+  --info-bg: rgba(196, 181, 253, 0.12);
+  --info-text: #ddd6fe;
+
+  /* Borders & Shadows */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-radius: 0.75rem;
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.5rem;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(24, 24, 27, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(16px);
+}
+
+/* ==================== Base Styles ==================== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ==================== Typography ==================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==================== Layout ==================== */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 280px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-right: 1px solid var(--glass-border);
+  padding: 1.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1000;
+  transition: transform var(--transition-base);
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-brand i {
+  font-size: 2rem;
+  color: var(--primary);
+}
+
+.sidebar-brand span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav .nav-item {
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-fast);
+}
+
+.sidebar-nav .nav-link:hover {
+  background: var(--surface-light);
+  color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+.sidebar-nav .nav-link.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-nav .nav-link i {
+  font-size: 1.25rem;
+  width: 1.5rem;
+  text-align: center;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* Mobile sidebar toggle */
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  background: var(--primary);
+  border: none;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 991.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 5rem 1rem 2rem;
+  }
+}
+
+/* ==================== Cards ==================== */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, var(--primary) 0%, transparent 70%);
+  opacity: 0.5;
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+.stat-card .stat-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.stat-card .stat-icon.primary {
+  background: rgba(139, 92, 246, 0.35);
+  color: var(--primary-light);
+}
+
+.stat-card .stat-icon.success {
+  background: rgba(52, 211, 153, 0.25);
+  color: var(--secondary-light);
+}
+
+.stat-card .stat-icon.warning {
+  background: rgba(251, 191, 36, 0.25);
+  color: var(--warning-text);
+}
+
+.stat-card .stat-icon.danger {
+  background: rgba(248, 113, 113, 0.25);
+  color: var(--danger-text);
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stat-card .stat-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* ==================== Buttons ==================== */
+.btn {
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-fast);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.4);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.5);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, var(--secondary-light) 0%, var(--secondary) 100%);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+  color: white;
+}
+
+.btn-outline-primary {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-light);
+  color: var(--text-primary);
+}
+
+/* ==================== Forms ==================== */
+.form-control,
+.form-select {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  transition: all var(--transition-fast);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--surface-light);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+  outline: none;
+  color: var(--text-primary);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-floating>.form-control,
+.form-floating>.form-select {
+  height: calc(3.5rem + 2px);
+  padding: 1rem 1rem;
+}
+
+.form-floating>label {
+  color: var(--text-muted);
+  padding: 1rem;
+}
+
+.form-floating>.form-control:focus~label,
+.form-floating>.form-control:not(:placeholder-shown)~label {
+  color: var(--primary);
+}
+
+.invalid-feedback {
+  color: var(--danger);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-check-input {
+  background-color: var(--surface);
+  border-color: var(--border-color);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* ==================== Tables ==================== */
+.table {
+  color: var(--text-primary);
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--surface);
+}
+
+.table thead th {
+  background: var(--surface-light);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody {
+  background: var(--surface);
+}
+
+.table tbody td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  color: var(--text-primary);
+  background: var(--surface);
+}
+
+.table tbody tr {
+  transition: background var(--transition-fast);
+  background: var(--surface);
+}
+
+.table tbody tr:hover {
+  background: var(--surface-light);
+}
+
+.table tbody tr:hover td {
+  background: var(--surface-light);
+}
+
+/* Ensure all table text is visible */
+.table td,
+.table th,
+.table td *,
+.table th * {
+  color: var(--text-primary);
+}
+
+.table .text-muted,
+.table small {
+  color: var(--text-muted) !important;
+}
+
+.table-responsive {
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+/* ==================== Badges ==================== */
+.badge {
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+.badge-scheduled,
+.badge-primary {
+  background: rgba(var(--primary-rgb), 0.2);
+  color: var(--primary-light);
+}
+
+.badge-completed,
+.badge-success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge-cancelled,
+.badge-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-pending,
+.badge-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+/* ==================== Alerts / Flash Messages ==================== */
+.alert {
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  animation: slideIn 0.3s ease;
+}
+
+.alert-success {
+  background: var(--success-bg);
+  color: var(--success);
+  border-left: 4px solid var(--success);
+}
+
+.alert-danger,
+.alert-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-left: 4px solid var(--danger);
+}
+
+.alert-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border-left: 4px solid var(--warning);
+}
+
+.alert-info {
+  background: var(--info-bg);
+  color: var(--info);
+  border-left: 4px solid var(--info);
+}
+
+/* ==================== Auth Pages ==================== */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 50%, var(--surface) 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-xl);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-xl);
+}
+
+.auth-card .auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-card .auth-header .logo {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.auth-card .auth-header .logo i {
+  font-size: 2rem;
+  color: white;
+}
+
+.auth-card .auth-header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.auth-card .auth-header p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+/* ==================== Hero Section ==================== */
+.hero {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.hero .btn-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ==================== Feature Cards ==================== */
+.feature-card {
+  text-align: center;
+  padding: 2rem;
+}
+
+.feature-card .feature-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.75rem;
+  color: white;
+}
+
+.feature-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.feature-card p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ==================== User Dropdown ==================== */
+.user-dropdown {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.user-dropdown .dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.user-dropdown .dropdown-toggle:hover {
+  background: var(--surface-light);
+}
+
+.user-dropdown .user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+}
+
+.user-dropdown .user-info {
+  flex: 1;
+  text-align: left;
+}
+
+.user-dropdown .user-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.user-dropdown .user-role {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.dropdown-menu {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  padding: 0.5rem;
+}
+
+.dropdown-item {
+  color: var(--text-primary);
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-item:hover {
+  background: var(--surface-light);
+  color: var(--text-primary);
+}
+
+.dropdown-item.text-danger {
+  color: var(--danger);
+}
+
+/* ==================== Footer ==================== */
+.footer {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+/* ==================== Animations ==================== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease;
+}
+
+/* ==================== Utilities ==================== */
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 1rem;
+}
+
+.gap-4 {
+  gap: 1.5rem;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* ==================== Doctor Photo ==================== */
+.doctor-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.doctor-photo-lg {
+  width: 80px;
+  height: 80px;
+}
+
+.doctor-photo-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--surface-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+}
+
+/* ==================== Notification Badge ==================== */
+.notification-badge {
+  position: relative;
+}
+
+.notification-badge::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--danger);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* ==================== Dark Theme Fixes ==================== */
+
+/* Nav Pills */
+.nav-pills .nav-link {
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  margin-right: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.nav-pills .nav-link:hover {
+  color: var(--text-primary);
+  background: var(--surface-light);
+}
+
+.nav-pills .nav-link.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Nav Tabs */
+.nav-tabs {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.nav-tabs .nav-link {
+  color: var(--text-muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  transition: all var(--transition-fast);
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--text-primary);
+  border-bottom-color: var(--surface-lighter);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary);
+  background: transparent;
+  border-bottom-color: var(--primary);
+}
+
+/* Tab Content */
+.tab-content {
+  background: transparent;
+}
+
+.tab-pane {
+  color: var(--text-primary);
+}
+
+/* Select dropdown options */
+.form-select option {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+/* Code elements */
+code {
+  background: var(--surface-light);
+  color: var(--primary-light);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+pre {
+  background: var(--surface);
+  color: var(--text-primary);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  overflow-x: auto;
+}
+
+/* Links */
+a {
+  color: var(--primary-light);
+}
+
+a:hover {
+  color: var(--primary);
+}
+
+/* Small and muted text */
+small {
+  color: var(--text-muted);
+}
+
+.small {
+  color: inherit;
+}
+
+/* Text utilities for dark theme */
+.text-dark {
+  color: var(--text-dark) !important;
+}
+
+.text-white {
+  color: white !important;
+}
+
+.text-primary {
+  color: var(--primary) !important;
+}
+
+.text-success {
+  color: var(--success) !important;
+}
+
+.text-warning {
+  color: var(--warning) !important;
+}
+
+.text-danger {
+  color: var(--danger) !important;
+}
+
+.text-info {
+  color: var(--info) !important;
+}
+
+/* Bootstrap Badge fixes for dark theme */
+.bg-secondary {
+  background-color: var(--surface-lighter) !important;
+  color: var(--text-primary) !important;
+}
+
+.bg-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+  color: white !important;
+}
+
+.bg-success {
+  background: var(--success) !important;
+  color: white !important;
+}
+
+.bg-danger {
+  background: var(--danger) !important;
+  color: white !important;
+}
+
+.bg-warning {
+  background: var(--warning) !important;
+}
+
+.bg-info {
+  background: var(--info) !important;
+  color: white !important;
+}
+
+/* Specific fixes for badges with dark text */
+.bg-warning.text-dark,
+.badge.bg-warning {
+  color: #1e293b !important;
+}
+
+/* Input group addons */
+.input-group-text {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+/* List groups */
+.list-group-item {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.list-group-item:hover {
+  background: var(--surface-light);
+}
+
+.list-group-item.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* Modal dialogs */
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.modal-header {
+  border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+  border-top-color: var(--border-color);
+}
+
+/* Pagination */
+.page-link {
+  background: var(--surface);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.page-link:hover {
+  background: var(--surface-light);
+  color: var(--text-primary);
+}
+
+.page-item.active .page-link {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Progress bars */
+.progress {
+  background: var(--surface);
+}
+
+.progress-bar {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+/* Accordion */
+.accordion-item {
+  background: var(--surface);
+  border-color: var(--border-color);
+}
+
+.accordion-button {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.accordion-button:not(.collapsed) {
+  background: var(--surface-light);
+  color: var(--primary);
+}
+
+.accordion-button::after {
+  filter: invert(1);
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+  background: transparent;
+}
+
+.breadcrumb-item a {
+  color: var(--primary-light);
+}
+
+.breadcrumb-item.active {
+  color: var(--text-muted);
+}
+
+/* Tooltips */
+.tooltip-inner {
+  background: var(--surface-light);
+  color: var(--text-primary);
+}
+
+/* Popovers */
+.popover {
+  background: var(--surface);
+  border-color: var(--border-color);
+}
+
+.popover-header {
+  background: var(--surface-light);
+  border-bottom-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.popover-body {
+  color: var(--text-primary);
+}
+
+/* Close button */
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Fix fw-semibold text color */
+.fw-semibold {
+  color: var(--text-primary);
+}
+
+/* Table cells text color fix */
+.table td,
+.table th {
+  color: var(--text-primary);
+}
+
+/* Ensure all headings in cards are visible */
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6 {
+  color: var(--text-primary);
+}
+
+/* Fix placeholder doctor photos with warning bg */
+.doctor-photo-placeholder[style*="warning"] i {
+  color: #1e293b;
+}
+
+/* ==================== GLOBAL CONTRAST FIXES ==================== */
+/* Force white text on all dark backgrounds for readability */
+
+/* All divs, spans, and paragraphs inside cards should be light */
+.card,
+.card div,
+.card span,
+.card p,
+.card-body,
+.card-body div,
+.card-body span,
+.card-body p {
+  color: var(--text-primary);
+}
+
+/* Table content - force light text */
+.table,
+.table tr,
+.table td,
+.table th,
+.table tbody,
+.table thead,
+.table div,
+.table span,
+.table p {
+  color: var(--text-primary) !important;
+}
+
+/* Exceptions - keep muted text muted but visible */
+.table .text-muted,
+.card .text-muted,
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Small text should be muted but visible */
+.table small,
+.card small,
+small:not(.text-muted) {
+  color: var(--text-secondary) !important;
+}
+
+/* Badges - ensure proper contrast */
+.badge {
+  font-weight: 600 !important;
+}
+
+.badge.bg-primary,
+.badge.badge-primary {
+  background: var(--primary) !important;
+  color: white !important;
+}
+
+.badge.bg-success,
+.badge.badge-success,
+.badge.badge-completed {
+  background: var(--success) !important;
+  color: white !important;
+}
+
+.badge.bg-danger,
+.badge.badge-danger,
+.badge.badge-cancelled {
+  background: var(--danger) !important;
+  color: white !important;
+}
+
+.badge.bg-warning,
+.badge.badge-warning,
+.badge.badge-pending {
+  background: var(--warning) !important;
+  color: #1a1a2e !important;
+}
+
+.badge.bg-info,
+.badge.badge-info {
+  background: var(--info) !important;
+  color: white !important;
+}
+
+.badge.bg-secondary,
+.badge.badge-secondary {
+  background: var(--surface-lighter) !important;
+  color: white !important;
+}
+
+.badge.badge-scheduled {
+  background: var(--primary) !important;
+  color: white !important;
+}
+
+/* Links inside tables and cards */
+.table a,
+.card a:not(.btn):not(.nav-link) {
+  color: var(--primary-light) !important;
+}
+
+.table a:hover,
+.card a:not(.btn):not(.nav-link):hover {
+  color: var(--primary) !important;
+}
+
+/* Form labels */
+.form-label,
+label {
+  color: var(--text-secondary) !important;
+}
+
+/* Input group text */
+.input-group-text {
+  background: var(--surface) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
+
+/* Icons in forms */
+.input-group-text i,
+.input-group i {
+  color: var(--text-muted) !important;
+}
+
+/* Stats on cards */
+.stat-card .card-body h3,
+.stat-card .card-body h4,
+.stat-card .card-body .h3,
+.stat-card .card-body .h4 {
+  color: var(--text-primary) !important;
+}
+
+/* Main content area */
+.main-content,
+.main-content div,
+.main-content span,
+.main-content p {
+  color: var(--text-primary);
+}
+
+/* Row content */
+.row,
+.row div:not(.badge):not(.btn),
+.row span:not(.badge),
+.row p {
+  color: var(--text-primary);
+}
+
+/* Dropdown buttons and items */
+.dropdown-toggle,
+.dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+.dropdown-item:hover {
+  background: var(--surface-light) !important;
+  color: var(--text-primary) !important;
+}
+
+.dropdown-item.text-danger,
+.dropdown-item.text-danger:hover {
+  color: var(--danger) !important;
+}
+
+/* Bootstrap text helpers for dark theme */
+.text-body {
+  color: var(--text-primary) !important;
+}
+
+.text-body-secondary {
+  color: var(--text-muted) !important;
+}
+
+/* Links and anchors default */
+a:not(.btn):not(.nav-link):not(.badge) {
+  color: var(--primary-light);
+}
+
+a:not(.btn):not(.nav-link):not(.badge):hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* Alert text colors */
+.alert {
+  color: inherit;
+}
+
+.alert-info {
+  color: #3b82f6 !important;
+}
+
+.alert-success {
+  color: #22c55e !important;
+}
+
+.alert-warning {
+  color: #eab308 !important;
+}
+
+.alert-danger {
+  color: #ef4444 !important;
+}
+
+/* Ensure code in dark theme is readable */
+code {
+  background: var(--surface-light) !important;
+  color: #f0abfc !important;
+  padding: 0.125rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+}
+
+/* Fix text colors on warning/light backgrounds */
+.bg-warning,
+.bg-warning *:not(.badge):not(.btn) {
+  color: #1a1a2e !important;
+}
+
+.bg-light,
+.bg-light *:not(.badge):not(.btn) {
+  color: #1a1a2e !important;
+}
+
+/* Horizontal rules */
+hr {
+  border-color: var(--border-color);
+  opacity: 1;
+}
+
+/* Card footer and header text */
+.card-header,
+.card-header *,
+.card-footer,
+.card-footer * {
+  color: var(--text-primary);
+}
+
+.card-header .text-muted,
+.card-footer .text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Form text/help */
+.form-text {
+  color: var(--text-muted) !important;
+}
+
+/* Select2 and other select libraries */
+.select2-container--default .select2-selection--single {
+  background-color: var(--surface) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Ensure all span/div inside tables use light text */
+table span,
+table div {
+  color: inherit;
+}
+
+/* Text truncate helper */
+.text-truncate {
+  color: inherit !important;
+}
+
+/* d-inline-block text fix */
+.d-inline-block:not(.badge) {
+  color: inherit;
+}
+
+/* Strong and bold text */
+strong,
+b,
+.fw-bold {
+  color: inherit;
+}
+
+.fw-semibold {
+  color: var(--text-primary) !important;
+}
+
+/* Fix warning text on dark */
+.text-warning {
+  color: var(--warning) !important;
+}
+
+/* Image and icon alt text */
+[alt] {
+  color: var(--text-muted);
+}
+
+/* Empty state text */
+.text-center.py-5 h5,
+.text-center.py-5 p {
+  color: var(--text-muted) !important;
+}
+
+.text-center.py-5 i {
+  color: var(--surface-lighter) !important;
+}
+
+/* Fix any remaining dark text issues */
+.text-dark {
+  color: #1a1a2e !important;
+}
+
+/* Nav tabs override for consistent styling */
+.nav-tabs .nav-link {
+  color: var(--text-muted) !important;
+  background: transparent !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--text-primary) !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-light) !important;
+  background: transparent !important;
+  border-bottom: 2px solid var(--primary) !important;
+  border-color: transparent transparent var(--primary) transparent !important;
+}
+
+/* Specific fix for receptionist icons on warning background */
+.doctor-photo-placeholder i.bi-clock-history,
+.doctor-photo-placeholder i.bi-headset {
+  color: #1a1a2e !important;
+}
+
+/* ==================== BLUE TEXT CONTRAST FIXES ==================== */
+/* Fix blue-on-blue issues by using lighter/brighter blue variants */
+
+/* Primary text should be bright enough to contrast */
+.text-primary {
+  color: #a5b4fc !important;
+  /* Lighter indigo for better contrast */
+}
+
+/* Info badge backgrounds should have white text */
+.text-info {
+  color: #60a5fa !important;
+  /* Brighter blue */
+}
+
+/* Links on dark backgrounds */
+a,
+.card a,
+.table a {
+  color: #a5b4fc !important;
+  /* Light indigo */
+}
+
+a:hover,
+.card a:hover,
+.table a:hover {
+  color: #c7d2fe !important;
+  /* Even lighter on hover */
+}
+
+/* Badge with primary background */
+.badge.bg-primary,
+.badge-primary {
+  background-color: #6366f1 !important;
+  color: white !important;
+}
+
+/* Stat card icon colors - use bright versions */
+.stat-icon.bg-primary,
+.stat-icon.bg-opacity-10 {
+  background: rgba(99, 102, 241, 0.15) !important;
+}
+
+.stat-icon.bg-primary i,
+.stat-icon i.text-primary {
+  color: #a5b4fc !important;
+  /* Bright indigo */
+}
+
+.stat-icon i.text-info {
+  color: #60a5fa !important;
+  /* Bright blue */
+}
+
+/* Icons in general on dark backgrounds */
+i.text-primary,
+.bi.text-primary {
+  color: #a5b4fc !important;
+}
+
+i.text-info,
+.bi.text-info {
+  color: #60a5fa !important;
+}
+
+/* Card header icons */
+.card-header i.text-primary {
+  color: #a5b4fc !important;
+}
+
+/* Button outlines - ensure text is visible */
+.btn-outline-primary {
+  color: #a5b4fc !important;
+  border-color: #a5b4fc !important;
+}
+
+.btn-outline-primary:hover {
+  background: #6366f1 !important;
+  color: white !important;
+  border-color: #6366f1 !important;
+}
+
+.btn-outline-info {
+  color: #60a5fa !important;
+  border-color: #60a5fa !important;
+}
+
+.btn-outline-info:hover {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+/* Sidebar nav link icons */
+.sidebar-nav .nav-link i {
+  color: inherit !important;
+}
+
+/* Active sidebar link should have white icon */
+.sidebar-nav .nav-link.active i {
+  color: white !important;
+}
+
+/* Fix any blue text on blue-ish backgrounds */
+.surface-light .text-primary,
+.bg-surface-light .text-primary {
+  color: #c7d2fe !important;
+}
+
+/* Ensure buttons have proper text color */
+.btn-primary,
+.btn-info {
+  color: white !important;
+}
+
+/* Tab panel content */
+.tab-content .text-primary {
+  color: #a5b4fc !important;
+}
+
+/* Card body links and primary text */
+.card-body .text-primary,
+.card-body a.text-primary {
+  color: #a5b4fc !important;
+}
+
+/* Table primary text */
+.table .text-primary {
+  color: #a5b4fc !important;
+}
+
+/* Ensure schedule badges are readable */
+.badge-scheduled,
+.badge.badge-scheduled {
+  background: rgba(99, 102, 241, 0.3) !important;
+  color: #c7d2fe !important;
+}
+
+/* Fix info alert background/text */
+.alert-info {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #60a5fa !important;
+  border-left: 4px solid #3b82f6 !important;
+}
+
+.alert-info i {
+  color: #60a5fa !important;
+}
+
+/* Breadcrumb links */
+.breadcrumb-item a {
+  color: #a5b4fc !important;
+}
+
+/* Nav pills primary */
+.nav-pills .nav-link.active {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  color: white !important;
+}
+
+/* Feature icons */
+.feature-icon,
+.feature-card .feature-icon {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  color: white !important;
+}
+
+.feature-icon i {
+  color: white !important;
+}

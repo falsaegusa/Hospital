@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - MediCare{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">Admin Dashboard</h1>
+    <p class="text-muted mb-0">System overview and statistics</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon primary">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_patients }}</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon success">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_doctors }}</div>
+                <div class="stat-label">Total Doctors</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon warning">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_appointments }}</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon danger">
+                    <i class="bi bi-calendar-day"></i>
+                </div>
+                <div class="stat-value">{{ stats.today_appointments }}</div>
+                <div class="stat-label">Today's Appointments</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Upcoming Appointments -->
+    <div class="col-lg-8 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-week me-2 text-primary"></i>Upcoming Appointments
+                </h5>
+                <a href="{{ url_for('admin_appointments') }}" class="btn btn-ghost btn-sm">
+                    View All <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                {% if upcoming_appointments %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in upcoming_appointments[:5] %}
+                            <tr>
+                                <td>
+                                    {% if appointment.appointment_date %}
+                                    <div class="small fw-semibold">{{ appointment.appointment_date|format_date }}</div>
+                                    <small class="text-muted">{{ appointment.appointment_time|format_time }}</small>
+                                    {% else %}
+                                    <span class="text-muted">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ appointment.patient.name }}</td>
+                                <td>
+                                    {% if appointment.doctor %}
+                                    <span class="fw-semibold">Dr. {{ appointment.doctor.user.name }}</span>
+                                    {% else %}
+                                    <span class="text-warning">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge badge-{{ appointment.status }}">
+                                        {{ appointment.status|capitalize }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-calendar-check text-muted" style="font-size: 2rem;"></i>
+                    <p class=" text-muted mt-2 mb-0">No upcoming appointments</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning me-2 text-primary"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin_appointments') }}" class="btn btn-outline-primary text-start">
+                        <i class="bi bi-calendar-check me-2"></i>Manage Appointments
+                    </a>
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary text-start">
+                        <i class="bi bi-people me-2"></i>Manage Users
+                    </a>
+                    <a href="{{ url_for('admin_doctors') }}" class="btn btn-outline-primary text-start">
+                        <i class="bi bi-person-badge me-2"></i>Manage Doctors
+                    </a>
+                    <a href="{{ url_for('admin_rooms') }}" class="btn btn-outline-primary text-start">
+                        <i class="bi bi-door-open me-2"></i>Manage Rooms
+                    </a>
+                    <a href="{{ url_for('admin_equipment') }}" class="btn btn-outline-primary text-start">
+                        <i class="bi bi-tools me-2"></i>Manage Equipment
+                    </a>
+                    <a href="{{ url_for('admin_reports') }}" class="btn btn-primary text-start">
+                        <i class="bi bi-graph-up me-2"></i>Generate Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

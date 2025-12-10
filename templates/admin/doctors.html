@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Staff - MediCare Admin{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 mb-1">Manage Staff</h1>
+    <p class="text-muted mb-0">Create and manage doctor, receptionist, and admin accounts</p>
+</div>
+
+<div class="row">
+    <!-- Create Staff Account Form -->
+    <div class="col-lg-5 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-plus-fill me-2 text-primary"></i>Create Staff Account
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info small mb-3">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Create doctor or admin accounts here. Staff cannot self-register.
+                </div>
+
+                <form method="POST" action="{{ url_for('create_staff_account') }}" enctype="multipart/form-data">
+                    <h6 class="text-muted mb-3 small text-uppercase">Account Details</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control" required placeholder="Dr. John Smith">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required
+                            placeholder="doctor@hospital.com">
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" required minlength="6">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Role</label>
+                            <select name="role" class="form-select" required id="staffRole"
+                                onchange="toggleDoctorFields()">
+                                <option value="doctor">Doctor</option>
+                                <option value="receptionist">Receptionist</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="Optional">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="">Select</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Doctor-specific fields -->
+                    <div id="doctorFields">
+                        <hr class="my-3">
+                        <h6 class="text-muted mb-3 small text-uppercase">Doctor Profile</h6>
+
+                        <div class="mb-3">
+                            <label class="form-label">Specialization</label>
+                            <input type="text" name="specialization" class="form-control"
+                                placeholder="e.g., Cardiology">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">License Number</label>
+                            <input type="text" name="license_number" class="form-control" placeholder="e.g., MD-12345">
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Experience (Years)</label>
+                                <input type="number" name="years_of_experience" class="form-control" min="0">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Consultation Fee ($)</label>
+                                <input type="number" step="0.01" name="consultation_fee" class="form-control" min="0">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text" name="department" class="form-control"
+                                placeholder="e.g., Cardiology Dept">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Photo (Optional)</label>
+                            <input type="file" name="photo" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+
+                    <!-- Receptionist-specific fields -->
+                    <div id="receptionistFields" style="display: none;">
+                        <hr class="my-3">
+                        <h6 class="text-muted mb-3 small text-uppercase">Receptionist Profile</h6>
+
+                        <div class="mb-3">
+                            <label class="form-label">Employee ID</label>
+                            <input type="text" name="employee_id" class="form-control" placeholder="e.g., REC-001">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <select name="recep_department" class="form-select">
+                                <option value="Front Desk">Front Desk</option>
+                                <option value="ER Reception">ER Reception</option>
+                                <option value="Outpatient">Outpatient</option>
+                                <option value="Inpatient">Inpatient</option>
+                                <option value="Admissions">Admissions</option>
+                            </select>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Shift</label>
+                                <select name="shift" class="form-select">
+                                    <option value="Morning">Morning (6AM - 2PM)</option>
+                                    <option value="Afternoon">Afternoon (2PM - 10PM)</option>
+                                    <option value="Night">Night (10PM - 6AM)</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Desk Number</label>
+                                <input type="text" name="desk_number" class="form-control" placeholder="e.g., D-101">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-person-plus me-2"></i>Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Existing Staff -->
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-people me-2 text-primary"></i>Staff Accounts
+                    <span class="badge bg-success ms-2">{{ doctors|length }} doctors</span>
+                    <span class="badge bg-warning text-dark ms-1">{{ receptionists|length }} receptionists</span>
+                    <span class="badge bg-danger ms-1">{{ admins|length }} admins</span>
+                </h5>
+            </div>
+
+            <!-- Staff Type Tabs -->
+            <ul class="nav nav-tabs px-3 pt-2" id="staffTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="doctors-tab" data-bs-toggle="tab" data-bs-target="#doctors-pane"
+                        type="button">
+                        <i class="bi bi-heart-pulse me-1"></i>Doctors
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="receptionists-tab" data-bs-toggle="tab"
+                        data-bs-target="#receptionists-pane" type="button">
+                        <i class="bi bi-headset me-1"></i>Receptionists
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins-pane"
+                        type="button">
+                        <i class="bi bi-shield-lock me-1"></i>Admins
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="staffTabContent">
+                <!-- Doctors Tab -->
+                <div class="tab-pane fade show active" id="doctors-pane" role="tabpanel">
+                    {% if doctors %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Specialization</th>
+                                    <th>Department</th>
+                                    <th>Fee</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doctor in doctors %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            {% if doctor.photo_filename %}
+                                            <img src="{{ doctor.photo_filename|doctor_photo }}" alt=""
+                                                class="rounded-circle"
+                                                style="width: 40px; height: 40px; object-fit: cover;">
+                                            {% else %}
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px; background: var(--surface-hover);">
+                                                <i class="bi bi-person text-muted"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <div class="fw-semibold">Dr. {{ doctor.user.name }}</div>
+                                                <small class="text-muted">{{ doctor.user.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-success">{{ doctor.specialization }}</span></td>
+                                    <td>{{ doctor.department }}</td>
+                                    <td class="fw-semibold">${{ doctor.consultation_fee }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-heart-pulse text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="text-muted mt-3">No Doctors</h5>
+                        <p class="text-muted">Create a doctor account using the form.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Receptionists Tab -->
+                <div class="tab-pane fade" id="receptionists-pane" role="tabpanel">
+                    {% if receptionists %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Receptionist</th>
+                                    <th>Employee ID</th>
+                                    <th>Department</th>
+                                    <th>Shift</th>
+                                    <th>Desk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for recep in receptionists %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--warning) 0%, #fd7e14 100%);">
+                                                <i class="bi bi-headset text-dark"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">{{ recep.user.name }}</div>
+                                                <small class="text-muted">{{ recep.user.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><code>{{ recep.employee_id }}</code></td>
+                                    <td>{{ recep.department }}</td>
+                                    <td><span class="badge bg-info">{{ recep.shift }}</span></td>
+                                    <td>{{ recep.desk_number or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-headset text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="text-muted mt-3">No Receptionists</h5>
+                        <p class="text-muted">Create a receptionist account using the form.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Admins Tab -->
+                <div class="tab-pane fade" id="admins-pane" role="tabpanel">
+                    {% if admins %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Admin</th>
+                                    <th>Phone</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for admin in admins %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--danger) 0%, #6f42c1 100%);">
+                                                <i class="bi bi-shield-lock text-white"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">{{ admin.name }}</div>
+                                                <small class="text-muted">{{ admin.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ admin.phone or '-' }}</td>
+                                    <td><small class="text-muted">{{ admin.created_at|format_date }}</small></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-shield-lock text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="text-muted mt-3">No Other Admins</h5>
+                        <p class="text-muted">You are the only admin.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDoctorFields() {
+        const role = document.getElementById('staffRole').value;
+        const doctorFields = document.getElementById('doctorFields');
+        const receptionistFields = document.getElementById('receptionistFields');
+
+        // Hide all
+        doctorFields.style.display = 'none';
+        receptionistFields.style.display = 'none';
+        doctorFields.querySelectorAll('input').forEach(i => i.required = false);
+        receptionistFields.querySelectorAll('input, select').forEach(i => i.required = false);
+
+        if (role === 'doctor') {
+            doctorFields.style.display = 'block';
+            doctorFields.querySelectorAll('input').forEach(i => {
+                if (!i.name.includes('photo')) i.required = true;
+            });
+        } else if (role === 'receptionist') {
+            receptionistFields.style.display = 'block';
+            receptionistFields.querySelectorAll('input, select').forEach(i => {
+                if (i.name !== 'desk_number') i.required = true;
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', toggleDoctorFields);
+</script>
+{% endblock %}
