@@ -24,6 +24,30 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Auto-initialize database tables and admin user on startup
+def init_database():
+    """Create database tables and default admin if they don't exist"""
+    db.create_all()
+    
+    # Check if admin exists, if not create one
+    admin = User.query.filter_by(email='admin@hospital.com').first()
+    if not admin:
+        admin = User(
+            name='Admin User',
+            email='admin@hospital.com',
+            role='admin',
+            phone='1234567890'
+        )
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        print('Default admin created: admin@hospital.com / admin123')
+    print('Database initialized successfully!')
+
+# Run initialization on startup
+with app.app_context():
+    init_database()
+
 @login_manager.user_loader
 def load_user(user_id):
     """Load user for Flask-Login"""
