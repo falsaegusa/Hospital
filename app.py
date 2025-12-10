@@ -971,12 +971,22 @@ def admin_reports():
     completed = len([a for a in appointments if a.status == 'completed'])
     cancelled = len([a for a in appointments if a.status == 'cancelled'])
     scheduled = len([a for a in appointments if a.status == 'scheduled'])
+    pending = len([a for a in appointments if a.status == 'pending'])
+    
+    # Calculate revenue from completed appointments (safely handles None doctors)
+    revenue = sum(
+        a.doctor.consultation_fee 
+        for a in appointments 
+        if a.status == 'completed' and a.doctor is not None
+    )
     
     report_stats = {
         'total': total,
         'completed': completed,
         'cancelled': cancelled,
-        'scheduled': scheduled
+        'scheduled': scheduled,
+        'pending': pending,
+        'revenue': revenue
     }
     
     return render_template('admin/reports.html', 
@@ -984,6 +994,7 @@ def admin_reports():
                           report_stats=report_stats,
                           title=title,
                           report_type=report_type)
+
 
 
 # ==================== API ROUTES ====================

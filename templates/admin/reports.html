@@ -14,21 +14,21 @@
         <div class="row g-3">
             <div class="col-md-4">
                 <a href="{{ url_for('admin_reports', type='daily') }}"
-                    class="btn {% if request.args.get('type') == 'daily' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
+                    class="btn {% if report_type == 'daily' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
                     <i class="bi bi-calendar-day d-block mb-1" style="font-size: 1.5rem;"></i>
                     Daily Report
                 </a>
             </div>
             <div class="col-md-4">
                 <a href="{{ url_for('admin_reports', type='weekly') }}"
-                    class="btn {% if request.args.get('type') == 'weekly' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
+                    class="btn {% if report_type == 'weekly' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
                     <i class="bi bi-calendar-week d-block mb-1" style="font-size: 1.5rem;"></i>
                     Weekly Report
                 </a>
             </div>
             <div class="col-md-4">
                 <a href="{{ url_for('admin_reports', type='monthly') }}"
-                    class="btn {% if request.args.get('type') == 'monthly' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
+                    class="btn {% if report_type == 'monthly' %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 py-3">
                     <i class="bi bi-calendar-month d-block mb-1" style="font-size: 1.5rem;"></i>
                     Monthly Report
                 </a>
@@ -152,8 +152,7 @@
         <div class="row align-items-center">
             <div class="col-md-6">
                 <h5 class="text-white-50 mb-1">Revenue from Completed Appointments</h5>
-                <h2 class="mb-0 text-white">${{ appointments|selectattr('status', 'equalto',
-                    'completed')|map(attribute='doctor.consultation_fee')|sum }}</h2>
+                <h2 class="mb-0 text-white">${{ report_stats.revenue }}</h2>
             </div>
             <div class="col-md-6 text-md-end">
                 <i class="bi bi-currency-dollar" style="font-size: 4rem; opacity: 0.3;"></i>
