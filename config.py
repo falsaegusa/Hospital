@@ -9,11 +9,13 @@ class Config:
     
     # Database configuration - PostgreSQL
     # Format: postgresql://username:password@host:port/database_name
-    # Example: postgresql://postgres:yourpassword@localhost:5432/hospital_db
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'postgresql://postgres:2005@localhost:5432/hospital_db'
+    # Render uses postgres:// but SQLAlchemy needs postgresql://
+    _database_url = os.environ.get('DATABASE_URL') or 'postgresql://postgres:2005@localhost:5432/hospital_db'
+    if _database_url.startswith('postgres://'):
+        _database_url = _database_url.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = _database_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = True  # Print SQL queries for debugging (set to False in production)
+    SQLALCHEMY_ECHO = False  # Set to True for debugging SQL queries
     
     # Session configuration
     PERMANENT_SESSION_LIFETIME = timedelta(hours=2)
