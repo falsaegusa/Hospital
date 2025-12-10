@@ -8,11 +8,14 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
     # Database configuration - PostgreSQL
-    # Format: postgresql://username:password@host:port/database_name
-    # Render uses postgres:// but SQLAlchemy needs postgresql://
-    _database_url = os.environ.get('DATABASE_URL') or 'postgresql://postgres:2005@localhost:5432/hospital_db'
+    # Format: postgresql+psycopg://username:password@host:port/database_name
+    # We use psycopg (v3) driver, so scheme is postgresql+psycopg://
+    _database_url = os.environ.get('DATABASE_URL') or 'postgresql+psycopg://postgres:2005@localhost:5432/hospital_db'
+    # Render uses postgres:// but we need postgresql+psycopg:// for psycopg3
     if _database_url.startswith('postgres://'):
-        _database_url = _database_url.replace('postgres://', 'postgresql://', 1)
+        _database_url = _database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+    elif _database_url.startswith('postgresql://'):
+        _database_url = _database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
     SQLALCHEMY_DATABASE_URI = _database_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False  # Set to True for debugging SQL queries
